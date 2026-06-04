@@ -4,3 +4,4 @@ __pycache__/
 .replit
 index.html
 venv/
+cities_cache.json
