@@ -205,10 +205,11 @@ def main():
     ]
     hh_town = 'c_678'
     sj_town = 4
+    border_lengh = 70
 
-    print("=" * 70)
+    print("=" * border_lengh)
     print("Сбор статистики по зарплатам разработчиков в Москве")
-    print("=" * 70)
+    print("=" * border_lengh)
 
     print("\n--- HeadHunter ---")
     hh_stats = get_hh_statistics(languages, hh_town)
@@ -216,9 +217,9 @@ def main():
     print("\n--- SuperJob ---")
     sj_stats = get_sj_statistics(languages, superjob_secret_key, sj_town)
 
-    print("\n" + "=" * 70)
-    print("ИТОГОВЫЕ ТАБЛИЦЫ")
-    print("=" * 70)
+    print("\n" + "=" * border_lengh)
+    print("ИТОГОВЫЙ РЕЗУЛЬТАТ")
+    print("=" * border_lengh)
 
     print_statistics_table(hh_stats, "Habr Moscow")
     print_statistics_table(sj_stats, "SuperJob Moscow")
