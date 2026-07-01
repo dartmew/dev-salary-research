@@ -4,6 +4,14 @@
 
 Список языков: `Python`, `Java`, `JavaScript`, `PHP`, `C++`, `C#`, `C`, `Go`, `Ruby`, `Swift`, `TypeScript`, `Scala`, `Objective-C`, `1с`.
 
+## Используемые технологии
+
+- Python
+- requests
+- python-dotenv
+- terminaltables
+- [API HeadHunter](https://gist.github.com/DevmanServices/52658ee8152985e554ca09314b7f3cb0) / [API SuperJob](https://api.superjob.ru/)
+
 ## Как установить
 
 1. **Клонируйте репозиторий** (или создайте папку с проектом).
