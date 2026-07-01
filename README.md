@@ -83,4 +83,4 @@ python main.py
 ```
 
 ## Цель проекта
-Код написан в образовательных целях на онлайн‑курсе для веб‑разработчиков [dvmn.org](https://dvmn.org/).
+Код написан в образовательных целях на онлайн‑курсе для веб‑разработчиков [dvmn.org](https://dvmn.org/profession-ref-program/bigbluepie/HEnVq/).
