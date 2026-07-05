@@ -5,6 +5,18 @@ from dotenv import load_dotenv
 from terminaltables import AsciiTable
 
 
+def build_language_stats(total_found, salaries):
+    processed = len(salaries)
+    average = None
+    if processed > 0:
+        average = int(sum(salaries) / processed)
+    return {
+        'vacancies_found': total_found,
+        'vacancies_processed': processed,
+        'average_salary': average,
+    }
+
+
 def predict_salary(salary_from, salary_to):
     if salary_from is not None and salary_to is not None:
         return (salary_from + salary_to) / 2.0
@@ -16,7 +28,7 @@ def predict_salary(salary_from, salary_to):
         return None
 
 
-def predict_rub_salary_hh(vacancy):
+def predict_rub_salary_habr(vacancy):
     salary = vacancy.get('salary')
 
     if not salary:
@@ -28,7 +40,7 @@ def predict_rub_salary_hh(vacancy):
     return predict_salary(salary.get('from'), salary.get('to'))
 
 
-def fetch_hh_salaries(language, town_id='c_678'):
+def fetch_habr_salaries(language, town_id='c_678'):
     url = 'https://career.habr.com/api/frontend/vacancies'
     all_salaries = []
     total_found = 0
@@ -58,7 +70,7 @@ def fetch_hh_salaries(language, town_id='c_678'):
                 break
 
         for vac in data.get('list', []):
-            rub = predict_rub_salary_hh(vac)
+            rub = predict_rub_salary_habr(vac)
 
             if rub is not None:
                 all_salaries.append(rub)
@@ -73,24 +85,14 @@ def fetch_hh_salaries(language, town_id='c_678'):
     return total_found, all_salaries
 
 
-def get_hh_statistics(languages, town_id='c_678'):
+def get_habr_statistics(languages, town_id='c_678'):
     stats = {}
 
     for lang in languages:
-        print(f"  HH: загрузка {lang}...")
-        total, salaries = fetch_hh_salaries(lang, town_id)
-        processed = len(salaries)
-        avg = None
-
-        if processed:
-            avg = int(sum(salaries) / processed)
-        stats[lang] = {
-            'vacancies_found': total,
-            'vacancies_processed': processed,
-            'average_salary': avg
-        }
+        print(f"  Habr: загрузка {lang}...")
+        total, salaries = fetch_habr_salaries(lang, town_id)
+        stats[lang] = build_language_stats(total, salaries)
         time.sleep(0.5)
-
     return stats
 
 
@@ -106,10 +108,6 @@ def predict_rub_salary_sj(vacancy):
 
 
 def fetch_sj_salaries(language, superjob_secret_key, town_id=4):
-
-    if not superjob_secret_key:
-        return 0, []
-
     url = 'https://api.superjob.ru/2.0/vacancies/'
     headers = {'X-Api-App-Id': superjob_secret_key}
     all_salaries = []
@@ -154,26 +152,11 @@ def fetch_sj_salaries(language, superjob_secret_key, town_id=4):
 def get_sj_statistics(languages, superjob_secret_key, town_id=4):
     stats = {}
 
-    if not superjob_secret_key:
-        print("⚠️  SuperJob ключ не найден, пропускаем.")
-
-        return stats
-
     for lang in languages:
         print(f"  SJ: загрузка {lang}...")
         total, salaries = fetch_sj_salaries(lang, superjob_secret_key, town_id)
-        processed = len(salaries)
-        avg = None
-
-        if processed:
-            avg = int(sum(salaries) / processed)
-        stats[lang] = {
-            'vacancies_found': total,
-            'vacancies_processed': processed,
-            'average_salary': avg
-        }
+        stats[lang] = build_language_stats(total, salaries)
         time.sleep(0.5)
-
     return stats
 
 
@@ -203,7 +186,7 @@ def main():
         'C', 'Go', 'Ruby', 'Swift', 'TypeScript', 'Scala',
         'Objective-C', '1с'
     ]
-    hh_town = 'c_678'
+    habr_town = 'c_678'
     sj_town = 4
     border_lengh = 70
 
@@ -212,16 +195,20 @@ def main():
     print("=" * border_lengh)
 
     print("\n--- HeadHunter ---")
-    hh_stats = get_hh_statistics(languages, hh_town)
+    habr_stats = get_habr_statistics(languages, habr_town)
 
     print("\n--- SuperJob ---")
-    sj_stats = get_sj_statistics(languages, superjob_secret_key, sj_town)
+    if superjob_secret_key:  
+        sj_stats = get_sj_statistics(languages, superjob_secret_key, sj_town)
+    else:
+        print('SuperJob ключ не найден, пропускаем.')
+        sj_stats = {}
 
     print("\n" + "=" * border_lengh)
     print("ИТОГОВЫЙ РЕЗУЛЬТАТ")
     print("=" * border_lengh)
 
-    print_statistics_table(hh_stats, "Habr Moscow")
+    print_statistics_table(habr_stats, "Habr Moscow")
     print_statistics_table(sj_stats, "SuperJob Moscow")
 
 

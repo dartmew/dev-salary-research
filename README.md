@@ -18,7 +18,7 @@
 
 2. **Установите зависимости**:
    ```bash
-   pip install requests python-dotenv terminaltables
+   pip install -r requirements.txt
    ```
 
 3. **Получите секретный ключ для SuperJob**:
