@@ -56,12 +56,12 @@ def fetch_habr_salaries(language, town_id='c_678'):
             'page': page
         }
         try:
-            resp = requests.get(url, params=params)
-            resp.raise_for_status()
+            response = requests.get(url, params=params)
+            response.raise_for_status()
         except requests.exceptions.RequestException:
             break
 
-        data = resp.json()
+        data = response.json()
 
         if page == 1:
             total_found = data.get('meta', {}).get('totalResults', 0)
@@ -69,11 +69,11 @@ def fetch_habr_salaries(language, town_id='c_678'):
             if not total_found:
                 break
 
-        for vac in data.get('list', []):
-            rub = predict_rub_salary_habr(vac)
+        for vacancy in data.get('list', []):
+            salary_in_rubles = predict_rub_salary_habr(vacancy)
 
-            if rub is not None:
-                all_salaries.append(rub)
+            if salary_in_rubles is not None:
+                all_salaries.append(salary_in_rubles)
 
         total_pages = data.get('meta', {}).get('totalPages', 1)
 
@@ -88,10 +88,10 @@ def fetch_habr_salaries(language, town_id='c_678'):
 def get_habr_statistics(languages, town_id='c_678'):
     stats = {}
 
-    for lang in languages:
-        print(f"  Habr: загрузка {lang}...")
-        total, salaries = fetch_habr_salaries(lang, town_id)
-        stats[lang] = build_language_stats(total, salaries)
+    for language in languages:
+        print(f"  Habr: загрузка {language}...")
+        total, salaries = fetch_habr_salaries(language, town_id)
+        stats[language] = build_language_stats(total, salaries)
         time.sleep(0.5)
     return stats
 
@@ -135,11 +135,11 @@ def fetch_sj_salaries(language, superjob_secret_key, town_id=4):
             if not total_found:
                 break
 
-        for vac in data.get('objects', []):
-            rub = predict_rub_salary_sj(vac)
+        for vacancy in data.get('objects', []):
+            salary_in_rubles = predict_rub_salary_sj(vacancy)
 
-            if rub is not None:
-                all_salaries.append(rub)
+            if salary_in_rubles is not None:
+                all_salaries.append(salary_in_rubles)
 
         if not data.get('more', False):
             break
@@ -152,10 +152,10 @@ def fetch_sj_salaries(language, superjob_secret_key, town_id=4):
 def get_sj_statistics(languages, superjob_secret_key, town_id=4):
     stats = {}
 
-    for lang in languages:
-        print(f"  SJ: загрузка {lang}...")
-        total, salaries = fetch_sj_salaries(lang, superjob_secret_key, town_id)
-        stats[lang] = build_language_stats(total, salaries)
+    for language in languages:
+        print(f"  SJ: загрузка {language}...")
+        total, salaries = fetch_sj_salaries(language, superjob_secret_key, town_id)
+        stats[language] = build_language_stats(total, salaries)
         time.sleep(0.5)
     return stats
 
@@ -169,9 +169,9 @@ def print_statistics_table(stats, title):
         lang_display = lang.lower()
         found = data['vacancies_found']
         processed = data['vacancies_processed']
-        avg = data['average_salary']
-        avg_str = str(avg) if avg is not None else '—'
-        table_data.append([lang_display, found, processed, avg_str])
+        average_salary = data['average_salary']
+        average_salary_str = str(average_salary) if average_salary is not None else '—'
+        table_data.append([lang_display, found, processed, average_salary_str])
     table = AsciiTable(table_data, title=title)
     print(table.table)
     print()
