@@ -8,7 +8,7 @@ from terminaltables import AsciiTable
 def build_language_stats(total_found, salaries):
     processed = len(salaries)
     average = None
-    if processed > 0:
+    if processed:
         average = int(sum(salaries) / processed)
     return {
         'vacancies_found': total_found,
@@ -66,7 +66,7 @@ def fetch_habr_salaries(language, town_id='c_678'):
         if page == 1:
             total_found = data.get('meta', {}).get('totalResults', 0)
 
-            if total_found == 0:
+            if not total_found:
                 break
 
         for vac in data.get('list', []):
@@ -132,7 +132,7 @@ def fetch_sj_salaries(language, superjob_secret_key, town_id=4):
         if page == 0:
             total_found = data.get('total', 0)
 
-            if total_found == 0:
+            if not total_found:
                 break
 
         for vac in data.get('objects', []):
